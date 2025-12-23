@@ -76,13 +76,13 @@ func generateHeaders(secretID, secretKey, payload string, stream bool) map[strin
 
 	// Return headers
 	headers := map[string]string{
-		"Content-Type":     "application/json",
-		"Host":             ttsHost,
-		"X-TC-Action":      action,
-		"X-TC-Version":     ttsVersion,
-		"X-TC-Timestamp":   fmt.Sprintf("%d", timestamp),
-		"X-TC-Region":      "", // Region not required for TTS
-		"Authorization":    authorization,
+		"Content-Type":   "application/json",
+		"Host":           ttsHost,
+		"X-TC-Action":    action,
+		"X-TC-Version":   ttsVersion,
+		"X-TC-Timestamp": fmt.Sprintf("%d", timestamp),
+		"X-TC-Region":    "", // Region not required for TTS
+		"Authorization":  authorization,
 	}
 
 	return headers

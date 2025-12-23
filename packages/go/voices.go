@@ -16,12 +16,12 @@ var exVoicesJSON []byte
 
 // voiceResolver manages voice library with O(1) lookups.
 type voiceResolver struct {
-	turboVoices    []Voice
-	exVoices       []Voice
-	turboVoiceMap  map[string]Voice
-	exVoiceMap     map[string]Voice
-	initialized    bool
-	initOnce       sync.Once
+	turboVoices   []Voice
+	exVoices      []Voice
+	turboVoiceMap map[string]Voice
+	exVoiceMap    map[string]Voice
+	initialized   bool
+	initOnce      sync.Once
 }
 
 // Global voice resolver instance
