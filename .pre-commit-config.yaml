@@ -4,7 +4,7 @@ repos:
     rev: v0.5.1
     hooks:
       - id: go-fmt
-        files: ^packages/go/
+        files: ^packages/go/.*\.go$
 
   # Python formatting
   - repo: https://github.com/psf/black

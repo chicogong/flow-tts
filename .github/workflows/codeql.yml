@@ -1,0 +1,72 @@
+name: CodeQL Security Analysis
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: '0 3 * * 1'  # Weekly on Monday at 3 AM
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['python', 'javascript-typescript', 'go', 'java-kotlin']
+        include:
+          - language: python
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: go
+            build-mode: autobuild
+          - language: java-kotlin
+            build-mode: autobuild
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Setup Java (for java-kotlin)
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Go (for go)
+        if: matrix.language == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build Java
+        if: matrix.language == 'java-kotlin'
+        run: |
+          cd packages/java
+          mvn compile -B -q
+
+      - name: Build Go
+        if: matrix.language == 'go'
+        run: |
+          cd packages/go
+          go build ./...
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
