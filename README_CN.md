@@ -1,32 +1,49 @@
 # FlowTTS
 
-> 腾讯云 TTS 的 OpenAI 风格 SDK - 零依赖、TypeScript 优先
+[![Node.js CI](https://github.com/chicogong/flow-tts/actions/workflows/node-ci.yml/badge.svg)](https://github.com/chicogong/flow-tts/actions/workflows/node-ci.yml)
+[![Python CI](https://github.com/chicogong/flow-tts/actions/workflows/python-ci.yml/badge.svg)](https://github.com/chicogong/flow-tts/actions/workflows/python-ci.yml)
+[![Go CI](https://github.com/chicogong/flow-tts/actions/workflows/go-ci.yml/badge.svg)](https://github.com/chicogong/flow-tts/actions/workflows/go-ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> 腾讯云 TTS 的 OpenAI 风格 SDK - 简单、优雅、多语言支持
 
 [English](./README.md) | 简体中文
 
-FlowTTS 是一个轻量级、零依赖的文本转语音 SDK，使用 OpenAI 兼容的接口封装了腾讯云 TRTC TTS API。只需几行代码即可实现优雅的语音合成。
+FlowTTS 是一个轻量级文本转语音 SDK，使用 OpenAI 兼容的接口封装了腾讯云 TRTC TTS API。提供 **Node.js**、**Python** 和 **Go** 三种语言实现。
 
 ## ✨ 特性
 
 - 🎯 **OpenAI 兼容 API** - 可直接替换 OpenAI TTS
-- ⚡ **零依赖** - 仅使用 Node.js 内置模块
-- 🔷 **TypeScript 优先** - 开箱即用的完整类型安全
-- 🌊 **流式支持** - 支持 SSE 流式传输实时音频
+- 🌍 **多语言 SDK** - Node.js、Python 和 Go 实现
+- ⚡ **零依赖** - 仅使用标准库
+- 🔷 **类型安全** - 完整的 TypeScript、Python 类型提示和 Go 静态类型
+- 🌊 **流式支持** - 实时音频流式传输
 - 🎤 **丰富的音色库** - 380+ 预设音色，支持多种语言
 - 🔍 **自动语言检测** - 自动识别文本语言
-- 📦 **双构建模式** - 同时支持 ESM 和 CommonJS
 
 ## 📦 安装
 
+### Node.js
+
 ```bash
 npm install flow-tts
-# 或
-pnpm add flow-tts
-# 或
-yarn add flow-tts
+```
+
+### Python
+
+```bash
+pip install flow-tts
+```
+
+### Go
+
+```bash
+go get github.com/chicogong/flow-tts/go
 ```
 
 ## 🚀 快速开始
+
+### Node.js
 
 ```typescript
 import { FlowTTS } from 'flow-tts';
@@ -40,99 +57,71 @@ const client = new FlowTTS({
 // OpenAI 兼容 API
 const response = await client.audio.speech.create({
   text: '你好，世界！',
-  voice: 'v-female-R2s4N9qJ',
-  format: 'wav'
+  voice: 'v-female-R2s4N9qJ'
 });
 
-// 保存到文件
 await fs.writeFile('output.wav', response.audio);
 ```
 
-## ⚙️ 配置
+### Python
 
-### 环境变量
+```python
+from flow_tts import FlowTTS
 
-在项目根目录创建 `.env` 文件：
+client = FlowTTS({
+    "secret_id": "你的-secret-id",
+    "secret_key": "你的-secret-key",
+    "sdk_app_id": 1400000000
+})
 
-```env
-TX_SECRET_ID=你的腾讯云密钥ID
-TX_SECRET_KEY=你的腾讯云密钥Key
-TRTC_SDK_APP_ID=你的TRTC应用ID
+# 合成语音
+response = client.synthesize({
+    "text": "你好，世界！",
+    "voice": "v-female-R2s4N9qJ",
+    "format": "wav"
+})
+
+# 保存到文件
+with open("output.wav", "wb") as f:
+    f.write(response["audio"])
 ```
 
-### 客户端选项
+### Go
 
-```typescript
-interface FlowTTSConfig {
-  secretId: string;      // 腾讯云 Secret ID
-  secretKey: string;     // 腾讯云 Secret Key
-  sdkAppId: number;      // TRTC SDK App ID
-  region?: string;       // 区域（默认：'ap-beijing'）
+```go
+package main
+
+import (
+    "os"
+    flowtts "github.com/chicogong/flow-tts/go"
+)
+
+func main() {
+    client, _ := flowtts.NewClient(flowtts.Config{
+        SecretID:  os.Getenv("TX_SECRET_ID"),
+        SecretKey: os.Getenv("TX_SECRET_KEY"),
+        SdkAppID:  1400000000,
+    })
+
+    response, _ := client.Synthesize(flowtts.SynthesizeOptions{
+        Text:   "你好，世界！",
+        Voice:  "v-female-R2s4N9qJ",
+        Format: flowtts.AudioFormatWAV,
+    })
+
+    os.WriteFile("output.wav", response.Audio, 0644)
 }
 ```
 
-## 📖 使用示例
+## 📚 文档
 
-### 基础合成
+- [Node.js SDK 文档](./packages/node/README.md)
+- [Python SDK 文档](./packages/python/README.md)
+- [Go SDK 文档](./packages/go/README.md)
 
-```typescript
-import { FlowTTS } from 'flow-tts';
-import fs from 'fs/promises';
+## 🎤 音色库
 
-const client = new FlowTTS({
-  secretId: process.env.TX_SECRET_ID!,
-  secretKey: process.env.TX_SECRET_KEY!,
-  sdkAppId: parseInt(process.env.TRTC_SDK_APP_ID!)
-});
-
-// 合成语音
-const response = await client.synthesize({
-  text: '你好，世界！',
-  voice: 'v-female-R2s4N9qJ',
-  format: 'wav',
-  speed: 1.0,
-  volume: 1.0
-});
-
-// 保存到文件
-await fs.writeFile('output.wav', response.audio);
-console.log(`生成了 ${response.audio.length} 字节的音频`);
-```
-
-### 流式合成
-
-```typescript
-// 流式传输音频块
-for await (const chunk of client.synthesizeStream({
-  text: '这是一段测试文本',
-  format: 'pcm'
-})) {
-  if (chunk.type === 'audio') {
-    // 处理音频数据块
-    console.log(`收到 ${chunk.data.length} 字节`);
-  }
-}
-```
-
-### 音色管理
-
-```typescript
-// 获取所有可用音色
-const { preset } = client.getVoices();
-console.log(`共有 ${preset.length} 个音色`);
-
-// 搜索音色
-const gentleVoices = client.searchVoices('温柔');
-console.log(`找到 ${gentleVoices.length} 个温柔音色`);
-
-// 获取特定音色信息
-const voice = client.getVoice('v-female-R2s4N9qJ');
-console.log(voice.name); // "温柔姐姐"
-```
-
-## 🎤 音色选择
-
-SDK 提供 380+ 预设音色：
+SDK 提供 **380+ 预设音色**：
 - 77 个 Turbo 音色（低延迟）
 - 303 个扩展音色（高质量）
 
@@ -144,49 +133,72 @@ SDK 提供 380+ 预设音色：
 | `v-male-Bk7vD3xP` | 威严霸总 | 中文 | 成熟、稳重 |
 | `v-female-p9Xy7Q1L` | 清晰女旁白 | 英文 | 清晰、专业 |
 
-完整音色列表请运行：
+## 🌊 流式支持
 
+所有 SDK 都支持实时流式传输：
+
+**Node.js:**
 ```typescript
-const { preset } = client.getVoices();
-preset.forEach(v => console.log(`${v.id}: ${v.name} (${v.language})`));
-```
-
-## 🔧 API 参考
-
-### 合成选项
-
-```typescript
-interface SynthesizeOptions {
-  text: string;           // 要合成的文本（必需）
-  voice?: string;         // 音色 ID（默认：自动选择）
-  language?: string;      // 语言代码（默认：自动检测）
-  format?: 'wav' | 'pcm'; // 音频格式（默认：'wav'）
-  speed?: number;         // 语速 0.5-2.0（默认：1.0）
-  volume?: number;        // 音量 0.5-2.0（默认：1.0）
-  pitch?: number;         // 音调 -12 到 12（默认：0）
+for await (const chunk of client.synthesizeStream({ text: '...' })) {
+  if (chunk.type === 'audio') {
+    console.log(`收到 ${chunk.data.length} 字节`);
+  }
 }
 ```
 
-### 响应格式
+**Python:**
+```python
+for chunk in client.synthesize_stream({"text": "..."}):
+    if chunk["type"] == "audio":
+        print(f"收到 {len(chunk['data'])} 字节")
+```
 
-```typescript
-interface SynthesizeResponse {
-  audio: Buffer;          // 音频数据
-  format: AudioFormat;    // 音频格式
-  detectedLanguage?: string;  // 检测到的语言
-  autoDetected?: boolean;     // 是否自动检测
-  requestId: string;          // 请求 ID
+**Go:**
+```go
+chunkChan, _ := client.SynthesizeStream(flowtts.SynthesizeOptions{Text: "..."})
+for chunk := range chunkChan {
+    if chunk.Type == "audio" {
+        fmt.Printf("收到 %d 字节\n", len(chunk.Data))
+    }
 }
 ```
 
-## 🌍 支持的语言
+## ⚙️ 配置
 
-- 🇨🇳 中文（zh）
-- 🇺🇸 英语（en）
-- 🇯🇵 日语（ja）
-- 🇰🇷 韩语（ko）
+所有 SDK 都需要相同的凭证：
 
-SDK 会自动检测文本语言并选择合适的音色。
+```bash
+TX_SECRET_ID=你的腾讯云密钥ID
+TX_SECRET_KEY=你的腾讯云密钥Key
+TRTC_SDK_APP_ID=你的TRTC应用ID
+```
+
+## 🔧 开发
+
+```bash
+# 安装依赖 (Node.js)
+pnpm install
+
+# 构建 Node.js SDK
+pnpm --filter flow-tts build
+
+# 测试 Python SDK
+cd packages/python && pytest
+
+# 测试 Go SDK
+cd packages/go && go test ./...
+```
+
+## 📊 SDK 对比
+
+| 功能 | Node.js | Python | Go |
+|------|---------|--------|-----|
+| 零依赖 | ✅ | ✅ | ✅ |
+| 类型安全 | TypeScript | 类型提示 | 静态类型 |
+| 流式传输 | ✅ | ✅ | ✅ |
+| 音色库 | 380+ | 380+ | 380+ |
+| OpenAI 兼容 | ✅ | ✅ | ✅ |
+| 包管理器 | npm | PyPI | go get |
 
 ## 📄 许可证
 
@@ -196,11 +208,13 @@ MIT License - 详见 [LICENSE](./LICENSE) 文件
 
 欢迎提交 Issue 和 Pull Request！
 
-## 📮 联系方式
+## 📮 链接
 
-- GitHub: [chicogong/flow-tts](https://github.com/chicogong/flow-tts)
-- npm: [flow-tts](https://www.npmjs.com/package/flow-tts)
+- **GitHub**: [chicogong/flow-tts](https://github.com/chicogong/flow-tts)
+- **npm**: [flow-tts](https://www.npmjs.com/package/flow-tts)
+- **PyPI**: [flow-tts](https://pypi.org/project/flow-tts/)
+- **Go Package**: [github.com/chicogong/flow-tts/go](https://pkg.go.dev/github.com/chicogong/flow-tts/go)
 
 ## 🙏 致谢
 
-本项目基于腾讯云 TRTC TTS API 构建。
+基于腾讯云 TRTC TTS API 构建。

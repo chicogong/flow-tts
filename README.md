@@ -1,27 +1,49 @@
 # FlowTTS
 
-> OpenAI-style TTS SDK for Tencent Cloud - Zero dependencies, TypeScript-first
+[![Node.js CI](https://github.com/chicogong/flow-tts/actions/workflows/node-ci.yml/badge.svg)](https://github.com/chicogong/flow-tts/actions/workflows/node-ci.yml)
+[![Python CI](https://github.com/chicogong/flow-tts/actions/workflows/python-ci.yml/badge.svg)](https://github.com/chicogong/flow-tts/actions/workflows/python-ci.yml)
+[![Go CI](https://github.com/chicogong/flow-tts/actions/workflows/go-ci.yml/badge.svg)](https://github.com/chicogong/flow-tts/actions/workflows/go-ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+> OpenAI-style TTS SDK for Tencent Cloud - Simple, elegant, multi-language
 
 English | [简体中文](./README_CN.md)
 
-FlowTTS is a lightweight Text-to-Speech SDK that wraps Tencent Cloud's TRTC TTS API with an OpenAI-compatible interface.
+FlowTTS is a lightweight Text-to-Speech SDK that wraps Tencent Cloud's TRTC TTS API with an OpenAI-compatible interface. Available in **Node.js**, **Python**, and **Go**.
 
-## Features
+## ✨ Features
 
-✨ **OpenAI-Compatible** - Drop-in replacement for OpenAI TTS  
-⚡ **Zero Dependencies** - Uses only built-in modules  
-🎯 **TypeScript-First** - Full type safety  
-🌊 **Streaming** - Real-time SSE streaming  
-🎤 **Rich Voices** - 100+ preset voices  
-🔍 **Auto-Detect** - Automatic language detection  
+- 🎯 **OpenAI-Compatible API** - Drop-in replacement for OpenAI TTS
+- 🌍 **Multi-Language SDKs** - Node.js, Python, and Go implementations
+- ⚡ **Zero Dependencies** - Uses only built-in libraries
+- 🔷 **Type-Safe** - Full TypeScript, Python type hints, and Go static typing
+- 🌊 **Streaming Support** - Real-time audio streaming
+- 🎤 **Rich Voice Library** - 380+ preset voices in multiple languages
+- 🔍 **Auto Language Detection** - Automatically detects text language
 
-## Installation
+## 📦 Installation
+
+### Node.js
 
 ```bash
 npm install flow-tts
 ```
 
-## Quick Start
+### Python
+
+```bash
+pip install flow-tts
+```
+
+### Go
+
+```bash
+go get github.com/chicogong/flow-tts/go
+```
+
+## 🚀 Quick Start
+
+### Node.js
 
 ```typescript
 import { FlowTTS } from 'flow-tts';
@@ -34,31 +56,165 @@ const client = new FlowTTS({
 
 // OpenAI-compatible API
 const response = await client.audio.speech.create({
-  text: '你好，世界！',
+  text: 'Hello, world!',
   voice: 'v-female-R2s4N9qJ'
 });
 
 await fs.writeFile('output.wav', response.audio);
 ```
 
-## Documentation
+### Python
 
-See [packages/node/README.md](./packages/node/README.md) for full documentation.
+```python
+from flow_tts import FlowTTS
 
-## Development
+client = FlowTTS({
+    "secret_id": "your-secret-id",
+    "secret_key": "your-secret-key",
+    "sdk_app_id": 1400000000
+})
 
-```bash
-# Install dependencies
-pnpm install
+# Synthesize speech
+response = client.synthesize({
+    "text": "你好，世界！",
+    "voice": "v-female-R2s4N9qJ",
+    "format": "wav"
+})
 
-# Build
-pnpm --filter flow-tts build
-
-# Run examples
-cd packages/node
-pnpm tsx examples/basic.ts
+# Save to file
+with open("output.wav", "wb") as f:
+    f.write(response["audio"])
 ```
 
-## License
+### Go
 
-MIT
+```go
+package main
+
+import (
+    "os"
+    flowtts "github.com/chicogong/flow-tts/go"
+)
+
+func main() {
+    client, _ := flowtts.NewClient(flowtts.Config{
+        SecretID:  os.Getenv("TX_SECRET_ID"),
+        SecretKey: os.Getenv("TX_SECRET_KEY"),
+        SdkAppID:  1400000000,
+    })
+
+    response, _ := client.Synthesize(flowtts.SynthesizeOptions{
+        Text:   "你好，世界！",
+        Voice:  "v-female-R2s4N9qJ",
+        Format: flowtts.AudioFormatWAV,
+    })
+
+    os.WriteFile("output.wav", response.Audio, 0644)
+}
+```
+
+## 📚 Documentation
+
+- [Node.js SDK Documentation](./packages/node/README.md)
+- [Python SDK Documentation](./packages/python/README.md)
+- [Go SDK Documentation](./packages/go/README.md)
+
+## 🎤 Voice Library
+
+The SDK provides **380+ preset voices**:
+- 77 Turbo voices (low latency)
+- 303 Extended voices (high quality)
+
+### Recommended Voices
+
+| Voice ID | Name | Language | Features |
+|---------|------|---------|----------|
+| `v-female-R2s4N9qJ` | 温柔姐姐 | Chinese | Gentle, Warm |
+| `v-male-Bk7vD3xP` | 威严霸总 | Chinese | Mature, Steady |
+| `v-female-p9Xy7Q1L` | 清晰女旁白 | English | Clear, Professional |
+
+## 🌊 Streaming Support
+
+All SDKs support real-time streaming:
+
+**Node.js:**
+```typescript
+for await (const chunk of client.synthesizeStream({ text: '...' })) {
+  if (chunk.type === 'audio') {
+    console.log(`Received ${chunk.data.length} bytes`);
+  }
+}
+```
+
+**Python:**
+```python
+for chunk in client.synthesize_stream({"text": "..."}):
+    if chunk["type"] == "audio":
+        print(f"Received {len(chunk['data'])} bytes")
+```
+
+**Go:**
+```go
+chunkChan, _ := client.SynthesizeStream(flowtts.SynthesizeOptions{Text: "..."})
+for chunk := range chunkChan {
+    if chunk.Type == "audio" {
+        fmt.Printf("Received %d bytes\n", len(chunk.Data))
+    }
+}
+```
+
+## ⚙️ Configuration
+
+All SDKs require the same credentials:
+
+```bash
+TX_SECRET_ID=your-tencent-cloud-secret-id
+TX_SECRET_KEY=your-tencent-cloud-secret-key
+TRTC_SDK_APP_ID=your-trtc-app-id
+```
+
+## 🔧 Development
+
+```bash
+# Install dependencies (Node.js)
+pnpm install
+
+# Build Node.js SDK
+pnpm --filter flow-tts build
+
+# Test Python SDK
+cd packages/python && pytest
+
+# Test Go SDK
+cd packages/go && go test ./...
+```
+
+## 📊 SDK Comparison
+
+| Feature | Node.js | Python | Go |
+|---------|---------|--------|-----|
+| Zero Dependencies | ✅ | ✅ | ✅ |
+| Type Safety | TypeScript | Type Hints | Static Types |
+| Streaming | ✅ | ✅ | ✅ |
+| Voice Library | 380+ | 380+ | 380+ |
+| OpenAI Compatible | ✅ | ✅ | ✅ |
+| Package Manager | npm | PyPI | go get |
+
+## 📄 License
+
+MIT License - see [LICENSE](./LICENSE) file
+
+## 🤝 Contributing
+
+Issues and Pull Requests are welcome!
+
+## 📮 Links
+
+- **GitHub**: [chicogong/flow-tts](https://github.com/chicogong/flow-tts)
+- **npm**: [flow-tts](https://www.npmjs.com/package/flow-tts)
+- **PyPI**: [flow-tts](https://pypi.org/project/flow-tts/)
+- **Go Package**: [github.com/chicogong/flow-tts/go](https://pkg.go.dev/github.com/chicogong/flow-tts/go)
+
+## 🙏 Acknowledgments
+
+Built on top of Tencent Cloud TRTC TTS API.
