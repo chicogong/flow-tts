@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache-dependency-path: packages/go/go.sum
+          cache-dependency-path: packages/go/go.mod
 
       - name: Download dependencies
         working-directory: packages/go
