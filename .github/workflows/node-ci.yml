@@ -1,0 +1,44 @@
+name: Node.js CI
+
+on:
+  push:
+    paths:
+      - 'packages/node/**'
+      - '.github/workflows/node-ci.yml'
+  pull_request:
+    paths:
+      - 'packages/node/**'
+      - '.github/workflows/node-ci.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18, 20]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: packages/node/package-lock.json
+
+      - name: Install dependencies
+        working-directory: packages/node
+        run: npm ci
+
+      - name: Build
+        working-directory: packages/node
+        run: npm run build
+
+      - name: Run tests
+        working-directory: packages/node
+        run: npm test
+
+      - name: Lint
+        working-directory: packages/node
+        run: npm run lint
