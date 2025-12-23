@@ -27,19 +27,13 @@ jobs:
           - language: javascript-typescript
             build-mode: none
           - language: go
-            build-mode: autobuild
+            build-mode: manual
           - language: java-kotlin
-            build-mode: autobuild
+            build-mode: manual
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          build-mode: ${{ matrix.build-mode }}
 
       - name: Setup Java (for java-kotlin)
         if: matrix.language == 'java-kotlin'
@@ -53,6 +47,12 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
 
       - name: Build Java
         if: matrix.language == 'java-kotlin'

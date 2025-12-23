@@ -124,7 +124,9 @@ func (vr *voiceResolver) searchVoices(query string) ([]Voice, error) {
 	queryLower := strings.ToLower(query)
 	var results []Voice
 
-	allVoices := append(vr.turboVoices, vr.exVoices...)
+	allVoices := make([]Voice, 0, len(vr.turboVoices)+len(vr.exVoices))
+	allVoices = append(allVoices, vr.turboVoices...)
+	allVoices = append(allVoices, vr.exVoices...)
 	for _, voice := range allVoices {
 		if strings.Contains(strings.ToLower(voice.Name), queryLower) ||
 			strings.Contains(strings.ToLower(voice.Description), queryLower) ||

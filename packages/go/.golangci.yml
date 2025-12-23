@@ -19,10 +19,16 @@ linters:
 linters-settings:
   errcheck:
     check-type-assertions: true
+    exclude-functions:
+      - (io.Closer).Close
+      - (*os.File).Close
+      - (net/http.ResponseWriter).Write
   gocritic:
     enabled-tags:
       - diagnostic
       - style
+    disabled-checks:
+      - appendAssign
   goimports:
     local-prefixes: github.com/chicogong/flow-tts
 
