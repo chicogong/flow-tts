@@ -1,10 +1,12 @@
 """Streaming FlowTTS Example."""
 
 import os
+
 from flow_tts import FlowTTS
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ImportError:
     pass
@@ -15,11 +17,13 @@ def main() -> None:
     print("🎤 FlowTTS Streaming Example\n")
 
     # Initialize client
-    client = FlowTTS({
-        "secret_id": os.getenv("TX_SECRET_ID", ""),
-        "secret_key": os.getenv("TX_SECRET_KEY", ""),
-        "sdk_app_id": int(os.getenv("TRTC_SDK_APP_ID", "0")),
-    })
+    client = FlowTTS(
+        {
+            "secret_id": os.getenv("TX_SECRET_ID", ""),
+            "secret_key": os.getenv("TX_SECRET_KEY", ""),
+            "sdk_app_id": int(os.getenv("TRTC_SDK_APP_ID", "0")),
+        }
+    )
 
     print("📡 Starting SSE streaming...")
     print('   Text: "这是一段用于测试流式语音合成的文本。"\n')
@@ -28,15 +32,19 @@ def main() -> None:
         audio_chunks = []
         chunk_count = 0
 
-        for chunk in client.synthesize_stream({
-            "text": "这是一段用于测试流式语音合成的文本。FlowTTS 支持实时流式传输。"
-        }):
+        for chunk in client.synthesize_stream(
+            {"text": "这是一段用于测试流式语音合成的文本。FlowTTS 支持实时流式传输。"}
+        ):
             if chunk["type"] == "audio":
                 audio_chunks.append(chunk["data"])
                 chunk_count += 1
-                print(f"   Received chunk {chunk_count} ({len(chunk['data'])} bytes)...")
+                print(
+                    f"   Received chunk {chunk_count} ({len(chunk['data'])} bytes)..."
+                )
             elif chunk["type"] == "end":
-                print(f"\n📊 Total audio size: {sum(len(c) for c in audio_chunks)} bytes")
+                print(
+                    f"\n📊 Total audio size: {sum(len(c) for c in audio_chunks)} bytes"
+                )
                 print(f"   Request ID: {chunk.get('request_id')}")
 
         # Save combined audio
@@ -47,7 +55,9 @@ def main() -> None:
 
             print("💾 Saved to output-streaming.pcm")
             print("   Note: PCM format can be converted to WAV using ffmpeg:")
-            print("   ffmpeg -f s16le -ar 24000 -ac 1 -i output-streaming.pcm output-streaming.wav")
+            print(
+                "   ffmpeg -f s16le -ar 24000 -ac 1 -i output-streaming.pcm output-streaming.wav"
+            )
 
     except Exception as e:
         print(f"❌ Error: {e}")
