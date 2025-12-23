@@ -49,6 +49,19 @@ ENV/
 dist/
 build/
 
+# Java/Maven
+target/
+*.jar
+*.class
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+
+# Go
+bin/
+pkg/
+
 # Audio files (for examples)
 *.mp3
 *.wav

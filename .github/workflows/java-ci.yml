@@ -1,0 +1,52 @@
+name: Java CI
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'packages/java/**'
+      - '.github/workflows/java-ci.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'packages/java/**'
+      - '.github/workflows/java-ci.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        java-version: [11, 17, 21]
+    
+    defaults:
+      run:
+        working-directory: packages/java
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        env:
+          JAVA_VERSION: ${{ matrix.java-version }}
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn clean compile -B
+
+      - name: Run tests
+        run: mvn test -B
+
+      - name: Package
+        run: mvn package -DskipTests -B
+
+      - name: Verify JAR
+        run: |
+          ls -la target/*.jar
+          jar tf target/flow-tts-*.jar | head -20

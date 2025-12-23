@@ -229,9 +229,15 @@ class FlowTTS:
 
         # Collect chunks
         chunks: List[StreamChunk] = []
+        request_id = ""
 
         def on_chunk(chunk_data: dict) -> None:
+            nonlocal request_id
             chunk_type = chunk_data.get("Type")
+
+            # Capture request ID from first chunk
+            if not request_id and chunk_data.get("RequestId"):
+                request_id = chunk_data.get("RequestId", "")
 
             if chunk_type == "audio":
                 audio_b64 = chunk_data.get("Audio")
@@ -242,6 +248,8 @@ class FlowTTS:
                             type="audio",
                             data=audio_bytes,
                             sequence=len(chunks),
+                            total_chunks=0,
+                            request_id=request_id,
                         )
                     )
 
@@ -250,8 +258,10 @@ class FlowTTS:
                 chunks.append(
                     StreamChunk(
                         type="end",
+                        data=b"",
+                        sequence=len(chunks),
                         total_chunks=len(chunks),
-                        request_id=chunk_data.get("RequestId"),
+                        request_id=chunk_data.get("RequestId", request_id),
                     )
                 )
 

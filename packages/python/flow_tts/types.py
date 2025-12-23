@@ -1,6 +1,6 @@
 """Type definitions for FlowTTS."""
 
-from typing import Any, Dict, List, Literal, Optional, TypedDict
+from typing import List, Literal, Optional, TypedDict
 
 # Audio format types
 AudioFormat = Literal["wav", "pcm"]
@@ -62,14 +62,14 @@ class VoiceLibrary(TypedDict):
     preset: List[Voice]
 
 
-class StreamChunk(TypedDict, total=False):
+class StreamChunk(TypedDict):
     """Stream chunk data."""
 
-    type: str
-    data: Optional[bytes]
-    sequence: Optional[int]
-    total_chunks: Optional[int]
-    request_id: Optional[str]
+    type: str  # Required: "audio" or "end"
+    data: bytes  # Audio data (may be empty for "end" type)
+    sequence: int  # Chunk sequence number
+    total_chunks: int  # Total chunks (0 if unknown)
+    request_id: str  # Request ID
 
 
 class TTSError(Exception):

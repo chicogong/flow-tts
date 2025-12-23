@@ -1,9 +1,8 @@
 """HTTP Request Handler for Tencent Cloud API."""
 
-import base64
 import http.client
 import json
-from typing import Any, Callable, Dict, Iterator, Optional
+from typing import Any, Callable, Dict
 
 from ..types import TTSError
 
