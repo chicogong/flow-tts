@@ -9,7 +9,20 @@
 
 English | [简体中文](./README_CN.md)
 
-FlowTTS is a lightweight Text-to-Speech SDK that wraps Tencent Cloud's TRTC TTS API with an OpenAI-compatible interface. Available in **Node.js**, **Python**, and **Go**.
+FlowTTS is a lightweight Text-to-Speech SDK that wraps Tencent Cloud's TRTC TTS API with an OpenAI-compatible interface. Available in **Node.js**, **Python**, **Go**, and **Java**.
+
+## 🎮 Try it Now
+
+Experience FlowTTS instantly without any setup:
+
+| Platform | Link | Description |
+|----------|------|-------------|
+| Hugging Face | [gonghaoran/flow-tts](https://huggingface.co/spaces/gonghaoran/flow-tts) | Free Gradio demo |
+| Streamlit | [flowtts.streamlit.app](https://flowtts.streamlit.app) | Interactive demo |
+| Replicate | [chicogong/flow-tts](https://replicate.com/chicogong/flow-tts) | API + Playground |
+
+> **BYOK (Bring Your Own Key)**: You need your own Tencent Cloud credentials to use these demos.
+> See [flowtts-byok](https://github.com/chicogong/flowtts-byok) for deployment guides.
 
 ## ✨ Features
 
@@ -210,6 +223,8 @@ Issues and Pull Requests are welcome!
 
 ## 📮 Links
 
+- **Live Demo**: [Hugging Face Space](https://huggingface.co/spaces/gonghaoran/flow-tts)
+- **BYOK Guide**: [flowtts-byok](https://github.com/chicogong/flowtts-byok)
 - **GitHub**: [chicogong/flow-tts](https://github.com/chicogong/flow-tts)
 - **npm**: [flow-tts](https://www.npmjs.com/package/flow-tts)
 - **PyPI**: [flow-tts](https://pypi.org/project/flow-tts/)
