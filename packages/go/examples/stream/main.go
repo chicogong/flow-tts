@@ -59,7 +59,7 @@ func main() {
 
 	// Save to file
 	if len(audioData) > 0 {
-		if err := os.WriteFile("output-stream.pcm", audioData, 0644); err != nil {
+		if err := os.WriteFile("output-stream.pcm", audioData, 0o644); err != nil {
 			log.Fatal(err)
 		}
 		fmt.Printf("Saved %d bytes to output-stream.pcm\n", len(audioData))

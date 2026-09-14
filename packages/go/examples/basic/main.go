@@ -39,7 +39,7 @@ func main() {
 	}
 
 	// Save to file
-	if err := os.WriteFile("output.wav", response.Audio, 0644); err != nil {
+	if err := os.WriteFile("output.wav", response.Audio, 0o644); err != nil {
 		log.Fatal(err)
 	}
 
