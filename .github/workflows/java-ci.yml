@@ -8,12 +8,9 @@ on:
       - '.github/workflows/java-ci.yml'
   pull_request:
     branches: [main, master]
-    paths:
-      - 'packages/java/**'
-      - '.github/workflows/java-ci.yml'
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     
     strategy:
@@ -50,3 +47,19 @@ jobs:
         run: |
           ls -la target/*.jar
           jar tf target/flow-tts-*.jar | head -20
+
+  # Keep the stable "build" check required by branch protection while the
+  # actual Java test/build jobs fan out across the supported JDK matrix.
+  build:
+    if: always()
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every Java matrix job to pass
+        env:
+          MATRIX_RESULT: ${{ needs.test.result }}
+        run: |
+          if [ "$MATRIX_RESULT" != "success" ]; then
+            echo "Java CI matrix result: $MATRIX_RESULT"
+            exit 1
+          fi
