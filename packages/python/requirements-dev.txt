@@ -1,7 +1,7 @@
 # Development dependencies
 python-dotenv>=1.2.3
 black>=26.5.1
-isort>=9.0.1
+isort>=9.0.2
 mypy>=1.20.2
 pytest>=9.1.1
 pytest-cov>=7.1.0
